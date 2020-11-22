@@ -7,6 +7,7 @@ class Application {
 
   constructor() {
     this.express = express();
+    this.connection();
     this.client();
   }
 
@@ -14,6 +15,19 @@ class Application {
     this.express.use(cors());
     this.express.use(helmet());
     this.express.use(express.json({ limit: "5mb" }));
+  }
+
+  connection() {
+    const MongoClient = require("mongodb").MongoClient;
+
+    MongoClient.connect(process.env.MONGO_CONNECTION_STRING, {
+      useUnifiedTopology: true,
+    })
+      .then((client: any) => {
+        console.log("Successfully connected to database");
+        const db = client.db("e-voting-db");
+      })
+      .catch((err: any) => console.error(err));
   }
 
   client() {
